@@ -1,8 +1,36 @@
 from selenium import webdriver
+from time import sleep
+from secrets import pw
+
 
 class InstaBot:
-    def __init__(self):
+    def __init__(self, username, pw):
+        self.username = username
+
+        # START LOGIN PROCESS
         self.driver = webdriver.Chrome()
         self.driver.get("https://instagram.com")
+        # wait for the page to load the DOM
+        sleep(2)
+        self.driver.find_element_by_xpath("//input[@name=\"username\"]")\
+            .send_keys(username)
+        self.driver.find_element_by_xpath("//input[@name=\"password\"]")\
+            .send_keys(pw)
+        self.driver.find_element_by_xpath('//button[@type="submit"]')\
+            .click()
+        # wait for the page to load the DOM
+        sleep(4)
+        # instagram ask if you want to save login, no clicked
+        self.driver.find_element_by_xpath("//button[contains(text(), 'Not Now')]")\
+            .click()
+        # wait for the page to load the DOM
+        sleep(2)
+        # instagram ask if you want ot turn notification on, no click
+        self.driver.find_element_by_xpath("//button[contains(text(), 'Not Now')]")\
+            .click()
+        sleep(2)
 
-InstaBot()
+        # END LOGIN PROCESS
+        
+
+InstaBot('pieter.vankatwijk',pw)

@@ -30,8 +30,14 @@ other commands used
 pip3 install virtualenv
 source venv/bin/activate
 ```
+# pre-requirements
+```
+nano secrets.py
+then type "pw = XXXXX"
+where XXXXX is your real password
+```
 
-## running the code
+# running the code
 ```
 python -i main.py
 exit()
