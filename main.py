@@ -44,12 +44,63 @@ class InstaBot:
         #Get a list of people you are following
         self.driver.find_element_by_xpath("//a[contains(@href,'/following')]")\
             .click()
+        following = self._get_names()
 
         # get a list of followers
         self.driver.find_element_by_xpath("//a[contains(@href,'/followers')]")\
             .click()
+        followers = self._get_names()
 
- 
+        
+        not_following_back = [user for user in following if user not in followers]
+        print(not_following_back)
+
+    def _get_names(self):
+        sleep(2)
+
+
+        # after click follower link, wait until dialog appear
+        self.driver.find_element_by_css_selector('div[role="dialog"]')
+        # now scroll - inject javascript to scroll
+        self.driver.execute_script('''
+        var fDialog = document.querySelector('div[role="dialog"] .isgrP');
+        fDialog.scrollTop = fDialog.scrollHeight
+        ''')
+        # wait for the lazy loading to activate
+        sleep(2)
+        # select the scroll box
+        scroll_box = self.driver.find_element_by_xpath("/html/body/div[4]/div/div/div[2]")
+        last_ht, ht = 0, 1
+        # compare the height to trick lazy loading to load more content
+        while last_ht != ht:
+            last_ht = ht
+            sleep(1)
+            # scroll more if the page has more content to load
+            ht = self.driver.execute_script("""
+                arguments[0].scrollTo(0, arguments[0].scrollHeight); 
+                return arguments[0].scrollHeight;
+                """, scroll_box)
+
+        # sugs = self.driver.find_element_by_xpath('/html/body/div[4]/div/div/div[2]/ul')
+        # self.driver.execute_script('arguments[0].scrollIntoView()', sugs)
+        # sleep(2)
+        # scroll_box = self.driver.find_element_by_xpath("/html/body/div[3]/div/div[2]")
+        # last_ht, ht = 0, 1
+        # while last_ht != ht:
+        #     last_ht = ht
+        #     sleep(1)
+        #     ht = self.driver.execute_script("""
+        #         arguments[0].scrollTo(0, arguments[0].scrollHeight); 
+        #         return arguments[0].scrollHeight;
+        #         """, scroll_box)
+        links = scroll_box.find_elements_by_tag_name('a')
+        names = [name.text for name in links if name.text != '']
+        # close button
+        self.driver.find_element_by_xpath("/html/body/div[4]/div/div/div[1]/div/div[2]/button")\
+            .click()
+        return names
+
 
 my_bot = InstaBot('pieter.vankatwijk',pw)
 my_bot.get_unfollowers()
+my_bot._get_names()
