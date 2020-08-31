@@ -31,6 +31,25 @@ class InstaBot:
         sleep(2)
 
         # END LOGIN PROCESS
-        
+    
+    def get_unfollowers(self):
 
-InstaBot('pieter.vankatwijk',pw)
+        # go to the profiles page
+        self.driver.find_element_by_xpath("//a[contains(@href,'/{}')]".format(self.username))\
+            .click()
+
+        # wait for the page to load
+        sleep(2)
+
+        #Get a list of people you are following
+        self.driver.find_element_by_xpath("//a[contains(@href,'/following')]")\
+            .click()
+
+        # get a list of followers
+        self.driver.find_element_by_xpath("//a[contains(@href,'/followers')]")\
+            .click()
+
+ 
+
+my_bot = InstaBot('pieter.vankatwijk',pw)
+my_bot.get_unfollowers()
